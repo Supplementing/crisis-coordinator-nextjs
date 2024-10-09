@@ -30,6 +30,7 @@ const Homepage = () => {
           style={{
             width: "100%",
             padding: "15px 10px 0px 10px",
+
             position: "absolute",
             height: "10vh",
             zIndex: 1000,
@@ -39,7 +40,11 @@ const Homepage = () => {
         >
           <Grid size={4}>
             <TextField
-              style={{ width: "100%" }}
+              style={{
+                width: "100%",
+                backgroundColor: "rgba(255,255,255)",
+                borderRadius: "5px",
+              }}
               id="outlined-basic"
               label="Search..."
               variant="outlined"
@@ -49,9 +54,14 @@ const Homepage = () => {
           <Grid size={4}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
-                Fitler By Severity
+                Filter By Severity
               </InputLabel>
               <Select
+                style={{
+                  width: "100%",
+                  backgroundColor: "rgba(255,255,255)",
+                  borderRadius: "5px",
+                }}
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={severity}

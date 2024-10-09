@@ -15,6 +15,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
 
 const Map = ({
   allowAddNew,
@@ -35,8 +37,10 @@ const Map = ({
       lastName: "",
       phoneNumber: "",
     },
+    images: [],
   });
 
+  // functions here ========================================================
   const handleSubmit = (e: any) => {
     // in here is where we would submit the form to the backend, aka Supabase to save the data
     e.preventDefault();
@@ -98,6 +102,7 @@ const Map = ({
     setNewPostModal(true);
   };
 
+  // useEffects here ========================================================
   useEffect(() => {
     Radar.initialize("prj_test_pk_045d81269c1631e23d96cd7c8c37283fc74d80bf");
 
@@ -229,6 +234,107 @@ const Map = ({
                 <MenuItem value="High">High 🔴</MenuItem>
               </Select>
             </FormControl>
+
+            <Typography
+              style={{ marginTop: "10px" }}
+              id="modal-modal-subtitle"
+              variant="h6"
+              component="h2"
+            >
+              Contact Info
+            </Typography>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="First Name"
+              variant="outlined"
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Last Name"
+              variant="outlined"
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Phone Number"
+              variant="outlined"
+            />
+
+            <Typography
+              style={{ marginTop: "10px" }}
+              id="modal-modal-subtitle"
+              variant="h6"
+              component="h2"
+            >
+              Images
+            </Typography>
+            <Typography style={{ marginTop: "10px" }} id="modal-modal-subtitle">
+              Add any images to help rescuers
+            </Typography>
+            <Box
+              sx={{
+                mt: 2,
+                mb: 2,
+                border: "1px dashed grey",
+                borderRadius: 2,
+                p: 2,
+              }}
+            >
+              <input
+                accept="image/*"
+                style={{ display: "none" }}
+                id="raised-button-file"
+                multiple
+                type="file"
+                onChange={(e) => {
+                  // Handle file upload logic here
+
+                  const images = [];
+                  for (const file of e.target.files) {
+                    images.push({
+                      name: file.name,
+                      img: URL.createObjectURL(file),
+                    });
+                  }
+                  setNewPostInfo({
+                    ...newPostInfo,
+                    images: images,
+                  });
+                }}
+              />
+              <label htmlFor="raised-button-file">
+                <Button variant="outlined" component="span" fullWidth>
+                  Upload Image
+                </Button>
+              </label>
+              <Typography
+                variant="caption"
+                display="block"
+                sx={{ mt: 1, textAlign: "center" }}
+              >
+                Supported formats: JPG, PNG, GIF (max 5MB)
+              </Typography>
+            </Box>
+            {newPostInfo.images.length > 0 && (
+              <ImageList
+                sx={{ width: 500, height: 450 }}
+                cols={3}
+                rowHeight={164}
+              >
+                {newPostInfo.images.map((item: any) => (
+                  <ImageListItem key={item.name}>
+                    <img
+                      srcSet={`${item.img}`}
+                      src={`${item.img}`}
+                      alt={item.name}
+                      loading="lazy"
+                    />
+                  </ImageListItem>
+                ))}
+              </ImageList>
+            )}
             <Button
               type="submit"
               variant="contained"
