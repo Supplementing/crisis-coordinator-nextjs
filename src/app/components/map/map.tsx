@@ -288,7 +288,10 @@ const Map = ({
                 id="raised-button-file"
                 multiple
                 type="file"
-                onChange={(e) => {
+                onChange={(e: any) => {
+                  if (!e.target.files) {
+                    return;
+                  }
                   // Handle file upload logic here
 
                   const images = [];
