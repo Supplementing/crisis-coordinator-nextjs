@@ -1,6 +1,6 @@
 # 🚧 Under Construction
 
-This application is currently being built so some features may not be complete/correct
+This application is currently being built so some features may not be complete/correct.
 To view a live demo, visit: https://crisis-coordinator-nextjs.vercel.app/
 
 # 🚧

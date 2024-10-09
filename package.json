@@ -12,6 +12,7 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^6.1.3",
+    "@supabase/supabase-js": "^2.45.4",
     "maplibre-gl": "^4.7.1",
     "next": "14.2.15",
     "radar-sdk-js": "^4.4.3",

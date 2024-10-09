@@ -17,7 +17,11 @@ import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
+import { createPost, getAllPosts, Post } from "./actions";
+import Loading from "../loading/loading";
+import Chip from "@mui/material/Chip";
 
+// the map functional component
 const Map = ({
   allowAddNew,
   setAllowAddNew,
@@ -25,9 +29,13 @@ const Map = ({
   allowAddNew: boolean;
   setAllowAddNew: (allowAddNew: boolean) => void;
 }) => {
+  // all the state vars, etc
   const allowClick = useRef(false);
   const [newPostModal, setNewPostModal] = useState(false);
+  const [viewPostDialog, setViewPostDialog] = useState(false);
+  const [postToView, setPostToView] = useState<any>(null);
   const [map, setMap] = useState<any>(null);
+  const [loadingPosts, setLoadingPosts] = useState(false);
   const [newPostInfo, setNewPostInfo] = useState<any>({
     description: "",
     severity: "",
@@ -39,12 +47,29 @@ const Map = ({
     },
     images: [],
   });
+  const [posts, setPosts] = useState<any>([]);
 
   // functions here ========================================================
   const handleSubmit = (e: any) => {
     // in here is where we would submit the form to the backend, aka Supabase to save the data
     e.preventDefault();
     console.log(newPostInfo);
+    createPost(newPostInfo).then((data) => {
+      console.log("post created", data);
+      reloadPosts();
+      setNewPostInfo({
+        description: "",
+        severity: "",
+        coordinates: [],
+        contactInfo: {
+          firstName: "",
+          lastName: "",
+          phoneNumber: "",
+        },
+        images: [],
+      });
+      handleClose();
+    });
   };
 
   const handleClose = () => {
@@ -101,6 +126,63 @@ const Map = ({
     // show the dialog
     setNewPostModal(true);
   };
+  const reloadPosts = async () => {
+    setLoadingPosts(true);
+    await map.removeLayer("posts");
+    getAllPosts().then((data) => {
+      setPosts(data);
+      setLoadingPosts(false);
+    });
+  };
+  const addPostsToMap = (data: any) => {
+    if (map.getLayer("posts")) {
+      console.log("already a layer bruv");
+      return;
+    }
+    map.addLayer({
+      id: "posts",
+      type: "circle",
+      source: {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: data.map((post: any) => {
+            return {
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: [post.coordinates[0], post.coordinates[1]],
+              },
+              properties: post,
+            };
+          }),
+        },
+      },
+      paint: {
+        "circle-radius": 8,
+        "circle-color": "#FF0000", // Red color
+        "circle-opacity": 0.6,
+        "circle-stroke-width": 1,
+        "circle-stroke-color": "#ffffff",
+      },
+    });
+
+    // then add the click handler to the new layer
+    map.on("click", "posts", (e: any) => {
+      // show a popup using a dialog to show the new info
+      console.log(e.features[0]);
+      setPostToView(e.features[0].properties);
+      setViewPostDialog(true);
+      // console.log("the item clicked", this.itemClicked);
+    });
+    map.on("mouseenter", "posts", () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+
+    map.on("mouseleave", "posts", () => {
+      map.getCanvas().style.cursor = "";
+    });
+  };
 
   // useEffects here ========================================================
   useEffect(() => {
@@ -115,7 +197,21 @@ const Map = ({
         zoom: 14,
       })
     );
+
+    getAllPosts().then((data) => {
+      setPosts(data);
+      setLoadingPosts(false);
+    });
   }, []);
+
+  //   another useEffect to add posts to the map when the map loads and we have the posts
+  useEffect(() => {
+    if (map && posts.length > 0) {
+      setTimeout(() => {
+        addPostsToMap(posts);
+      }, 1000);
+    }
+  }, [map, posts]);
 
   //   another useEffect to allow clicking when allow add has changed
   useEffect(() => {
@@ -180,11 +276,29 @@ const Map = ({
         id="map-container"
         style={{ width: "100%", height: "100vh", position: "absolute" }}
       >
+        {loadingPosts && (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 1000,
+            }}
+          >
+            <Loading />
+          </div>
+        )}
         <div
           id="map"
           style={{ width: "100%", height: "100vh", position: "absolute" }}
         />
       </div>
+      <ViewPostDialog
+        open={viewPostDialog}
+        onClose={() => setViewPostDialog(false)}
+        post={postToView}
+      />
       <Dialog
         open={newPostModal}
         onClose={handleClose}
@@ -354,4 +468,44 @@ const Map = ({
   );
 };
 
+const ViewPostDialog = ({
+  open,
+  onClose,
+  post,
+}: {
+  open: boolean;
+  onClose: () => void;
+  post: any;
+}) => {
+  if (!post) {
+    return null;
+  }
+  const calculateTimeAgo = (date: Date) => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diff / (1000 * 60));
+
+    return `${diffInMinutes} minutes ago`;
+  };
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <Box style={{ padding: "20px", width: "600px" }}>
+        <Typography variant="h6">
+          Posted: {new Date(post.created_at).toLocaleString()}
+        </Typography>
+        <Chip
+          color="primary"
+          label={calculateTimeAgo(new Date(post.created_at))}
+        />
+        <Typography variant="h6">Severity: {post.severity} </Typography>
+        <Typography variant="h6">Description: {post.description}</Typography>
+        <Typography variant="h6">Status: {post.status}</Typography>
+
+        <Button variant="contained" color="primary" fullWidth>
+          Contact
+        </Button>
+      </Box>
+    </Dialog>
+  );
+};
 export default Map;
