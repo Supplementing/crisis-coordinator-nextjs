@@ -19,7 +19,7 @@ const Homepage = () => {
   const severityOptions = ["Low", "Medium", "High"];
 
   const allowAdd = () => {
-    setAllowAddNew(true);
+    setAllowAddNew(!allowAddNew);
   };
   // in here, we are going to load the map div with searchbars and such above
   return (
@@ -67,14 +67,18 @@ const Homepage = () => {
             </FormControl>
           </Grid>
           <Grid style={{ textAlign: "right" }} size={4}>
-            <Button onClick={allowAdd} variant="contained">
-              Add New
+            <Button
+              color={allowAddNew ? "error" : "primary"}
+              onClick={allowAdd}
+              variant="contained"
+            >
+              {allowAddNew ? "Cancel" : "Add New"}
             </Button>
           </Grid>
         </Grid>
       </Box>
       <div id="map">
-        <Map allowAddNew={allowAddNew} />
+        <Map allowAddNew={allowAddNew} setAllowAddNew={setAllowAddNew} />
       </div>
     </>
   );

@@ -2,7 +2,7 @@
 
 import Radar from "radar-sdk-js";
 import "radar-sdk-js/dist/radar.css";
-import React from "react";
+import React, { use } from "react";
 import { useEffect } from "react";
 import { v4 } from "uuid";
 import Dialog from "@mui/material/Dialog";
@@ -14,8 +14,16 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
-
-const Map = ({ allowAddNew }: { allowAddNew: boolean }) => {
+import Snackbar from "@mui/material/Snackbar";
+import { SnackbarContent } from "@mui/material";
+const Map = ({
+  allowAddNew,
+  setAllowAddNew,
+}: {
+  allowAddNew: boolean;
+  setAllowAddNew: (allowAddNew: boolean) => void;
+}) => {
+  const allowClick = React.useRef(false);
   const [newPostModal, setNewPostModal] = React.useState(false);
   const [map, setMap] = React.useState<any>(null);
   const [newPostInfo, setNewPostInfo] = React.useState<any>({
@@ -38,10 +46,15 @@ const Map = ({ allowAddNew }: { allowAddNew: boolean }) => {
   const handleClose = () => {
     setNewPostModal(false);
     // also remove the click handler from the map
-    map.off("click");
+    if (map) {
+      setAllowAddNew(false);
+    }
   };
 
   const addMarkerToLocation = (e: any) => {
+    if (!allowClick.current) {
+      return;
+    }
     const id = v4();
     map.addLayer({
       id: id,
@@ -102,19 +115,41 @@ const Map = ({ allowAddNew }: { allowAddNew: boolean }) => {
   //   another useEffect to allow clicking when allow add has changed
   useEffect(() => {
     if (allowAddNew) {
-      console.log("adding the click handler");
-      map.on("click", (e: any) => {
-        // add a point to the map and open a dialog with the information needed to add the details
-        addMarkerToLocation(e);
-      });
+      allowClick.current = true;
     } else {
-      // remove the click listener on the map
-      console.log("removing the click handler");
+      allowClick.current = false;
     }
   }, [allowAddNew]);
 
+  useEffect(() => {
+    if (allowClick && map) {
+      map.on("click", addMarkerToLocation);
+    } else {
+      if (map) {
+        map.off("click", addMarkerToLocation);
+      }
+    }
+  }, [allowClick, map]);
+
   return (
     <>
+      <Snackbar
+        style={{ position: "absolute", zIndex: 1000 }}
+        open={allowAddNew}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        message="Click Anywhere On Map To Add New Crisis Point"
+      >
+        <div
+          style={{
+            backgroundColor: "rgba(141, 240, 134)",
+            padding: "20px",
+            borderRadius: "10px",
+            color: "black",
+          }}
+        >
+          Click Anywhere On Map To Add New Crisis Point
+        </div>
+      </Snackbar>
       <div
         id="map-container"
         style={{ width: "100%", height: "100vh", position: "absolute" }}
