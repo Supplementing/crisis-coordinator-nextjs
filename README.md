@@ -1,6 +1,7 @@
 # 🚧 Under Construction
 
 This application is currently being built so some features may not be complete/correct
+To view a live demo, visit: https://crisis-coordinator-nextjs.vercel.app/
 
 # 🚧
 
@@ -21,5 +22,3 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-To view a live demo, visit: https://crisis-coordinator-nextjs.vercel.app/
