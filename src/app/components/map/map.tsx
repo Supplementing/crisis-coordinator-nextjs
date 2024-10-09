@@ -15,7 +15,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
-import { SnackbarContent } from "@mui/material";
+
 const Map = ({
   allowAddNew,
   setAllowAddNew,
@@ -147,7 +147,28 @@ const Map = ({
             color: "black",
           }}
         >
-          Click Anywhere On Map To Add New Crisis Point
+          <div>Click Anywhere On Map To Add New Crisis Point</div>
+          <div
+            style={{
+              textAlign: "center",
+              margin: "10px 0px",
+              fontWeight: "bold",
+            }}
+          >
+            or
+          </div>
+          <TextField
+            style={{
+              width: "100%",
+              backgroundColor: "white",
+              borderRadius: "5px",
+            }}
+            size="small"
+            id="outlined-basic"
+            label="Enter Address..."
+            variant="outlined"
+            color="primary"
+          />
         </div>
       </Snackbar>
       <div
