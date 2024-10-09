@@ -23,6 +23,9 @@ export interface Post {
 
 export async function getAllPosts() {
   const { data, error } = await supabase.from("posts").select("*");
+  if (error) {
+    console.error(error);
+  }
   return data;
 }
 

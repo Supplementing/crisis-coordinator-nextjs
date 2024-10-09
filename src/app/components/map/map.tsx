@@ -17,7 +17,7 @@ import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
-import { createPost, getAllPosts, Post } from "./actions";
+import { createPost, getAllPosts } from "./actions";
 import Loading from "../loading/loading";
 import Chip from "@mui/material/Chip";
 
