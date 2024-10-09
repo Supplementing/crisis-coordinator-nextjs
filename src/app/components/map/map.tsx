@@ -2,8 +2,8 @@
 
 import Radar from "radar-sdk-js";
 import "radar-sdk-js/dist/radar.css";
-import React, { use } from "react";
-import { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import { v4 } from "uuid";
 import Dialog from "@mui/material/Dialog";
 import Box from "@mui/material/Box";
@@ -25,10 +25,10 @@ const Map = ({
   allowAddNew: boolean;
   setAllowAddNew: (allowAddNew: boolean) => void;
 }) => {
-  const allowClick = React.useRef(false);
-  const [newPostModal, setNewPostModal] = React.useState(false);
-  const [map, setMap] = React.useState<any>(null);
-  const [newPostInfo, setNewPostInfo] = React.useState<any>({
+  const allowClick = useRef(false);
+  const [newPostModal, setNewPostModal] = useState(false);
+  const [map, setMap] = useState<any>(null);
+  const [newPostInfo, setNewPostInfo] = useState<any>({
     description: "",
     severity: "",
     coordinates: [],
