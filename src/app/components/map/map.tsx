@@ -20,7 +20,7 @@ import ImageListItem from "@mui/material/ImageListItem";
 import { createPost, getAllPosts } from "./actions";
 import Loading from "../loading/loading";
 import Chip from "@mui/material/Chip";
-
+import "./mapStyles.css";
 // the map functional component
 const Map = ({
   allowAddNew,
@@ -55,7 +55,6 @@ const Map = ({
     e.preventDefault();
     console.log(newPostInfo);
     createPost(newPostInfo).then((data) => {
-      console.log("post created", data);
       reloadPosts();
       setNewPostInfo({
         description: "",

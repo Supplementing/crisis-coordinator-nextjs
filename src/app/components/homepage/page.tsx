@@ -9,6 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Snackbar from "@mui/material/Snackbar";
 
 const Homepage = () => {
   const [severity, setSeverity] = React.useState("");
@@ -90,6 +91,24 @@ const Homepage = () => {
       <div id="map">
         <Map allowAddNew={allowAddNew} setAllowAddNew={setAllowAddNew} />
       </div>
+      <Snackbar
+        style={{ position: "absolute", zIndex: 1000 }}
+        open={true}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <div
+          style={{
+            backgroundColor: "#E2DC36",
+            padding: "10px",
+            borderRadius: "10px",
+            maxWidth: "400px",
+            marginBottom: "10px",
+          }}
+        >
+          This app is currently under construction. Some features may be missing
+          or not working as expected.
+        </div>
+      </Snackbar>
     </>
   );
 };
