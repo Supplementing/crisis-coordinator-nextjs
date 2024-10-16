@@ -54,7 +54,7 @@ const Map = ({
     // in here is where we would submit the form to the backend, aka Supabase to save the data
     e.preventDefault();
     console.log(newPostInfo);
-    createPost(newPostInfo).then((data) => {
+    createPost(newPostInfo).then(() => {
       reloadPosts();
       setNewPostInfo({
         description: "",
@@ -265,7 +265,7 @@ const Map = ({
             }}
             size="small"
             id="outlined-basic"
-            label="Enter Address..."
+            label="Enter Address (Coming Soon)"
             variant="outlined"
             color="primary"
           />
@@ -484,23 +484,38 @@ const ViewPostDialog = ({
     const diff = now.getTime() - date.getTime();
     const diffInMinutes = Math.floor(diff / (1000 * 60));
 
-    return `${diffInMinutes} minutes ago`;
+    return `${Math.floor(diffInMinutes / 60)} hours ${
+      diffInMinutes % 60
+    } minutes ago`;
   };
   return (
     <Dialog open={open} onClose={onClose}>
       <Box style={{ padding: "20px", width: "600px" }}>
         <Typography variant="h6">
-          Posted: {new Date(post.created_at).toLocaleString()}
+          Posted: {new Date(post.created_at).toLocaleString()} (
+          {calculateTimeAgo(new Date(post.created_at))})
         </Typography>
-        <Chip
-          color="primary"
-          label={calculateTimeAgo(new Date(post.created_at))}
-        />
-        <Typography variant="h6">Severity: {post.severity} </Typography>
-        <Typography variant="h6">Description: {post.description}</Typography>
-        <Typography variant="h6">Status: {post.status}</Typography>
+        {/* <Chip color="primary" label={} /> */}
+        <Typography variant="h6">
+          Severity:{" "}
+          <Chip
+            color={
+              post.severity === "Low"
+                ? "success"
+                : post.severity === "Medium"
+                ? "warning"
+                : "error"
+            }
+            label={post.severity}
+          />
+        </Typography>
+        <Typography variant="h6">Description</Typography>
+        <Typography variant="body1">{post.description}</Typography>
+        <Typography variant="h6">
+          Status: {post.status ? post.status.toUpperCase() : "Unknown"}
+        </Typography>
 
-        <Button variant="contained" color="primary" fullWidth>
+        <Button className="mt-4" variant="contained" color="primary" fullWidth>
           Contact
         </Button>
       </Box>
